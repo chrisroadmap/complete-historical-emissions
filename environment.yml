@@ -1,0 +1,11 @@
+name: complete-historical-emissions
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - jupyter
+  - jupytext
+  - matplotlib
+  - numpy
+  - pandas
+  - scipy
