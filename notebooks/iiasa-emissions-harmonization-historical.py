@@ -239,6 +239,6 @@ global_historical
 os.makedirs('../data/output', exist_ok=True)
 
 # %%
-global_historical.to_csv('../data/output/historical_emissions_1750-2024.csv', index=False)
+global_historical.to_csv('../data/output/historical_emissions_1750-2024.csv', index=True)
 
 # %%
