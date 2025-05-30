@@ -1,3 +1,6 @@
+# Don't commit notebooks with jupytext
+*.ipynb
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

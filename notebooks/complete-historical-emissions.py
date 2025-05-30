@@ -427,6 +427,34 @@ df_emissions['model']='reconstructed'
 df_emissions['variable'] = df_emissions['variable'].replace(scenariomip_to_fair)
 
 # %%
+# one final thing: add a total CO2, which is useful for harmonization
+df_emissions = pd.concat(
+    (
+        df_emissions,
+        pd.DataFrame(
+            [
+                [
+                    'reconstructed',
+                    'historical',
+                    'CO2',
+                    'World',
+                    'Gt CO2/yr'
+                ] + [emis for emis in 
+                     (
+                        np.squeeze(
+                            df_emissions.loc[df_emissions['variable']=='CO2 AFOLU', '1750':].values + df_emissions.loc[df_emissions['variable']=='CO2 FFI', '1750':]
+                            .values
+                        )
+                    )
+                ]
+            ],
+            columns = ['model', 'scenario', 'variable', 'region', 'unit'] + [str(year) for year in range(1750, 2025)]
+        )
+    ),
+    ignore_index=True
+)
+
+# %%
 df_emissions
 
 # %%
@@ -465,46 +493,37 @@ df_historical_harmonization.drop(columns=to_drop, inplace=True)
 #df_historical_harmonization['variable'] = df_historical_harmonization['variable'].replace(scenariomip_to_fair)
     #list(df_historical_harmonization['variable'].values)
 #df_historical_harmonization.replace(to_replace='Emissions|*', value='', regex=True)
-df_historical_harmonization
+#df_historical_harmonization
+
+# %%
+# # Do the historical harmonization with the CO2 total based off the smoothed AFOLU
+# df_historical_harmonization = pd.concat(
+#     (
+#         df_historical_harmonization,
+#         pd.DataFrame(
+#             [
+#                 [
+#                     'reconstructed',
+#                     'historical',
+#                     'CO2',
+#                     'World',
+#                     'Gt CO2/yr'
+#                 ] + [emis for emis in 
+#                      (
+#                         np.squeeze(
+#                             df_historical_harmonization.loc[df_historical_harmonization['variable']=='CO2 AFOLU', '2014':].values + df_historical_harmonization.loc[df_historical_harmonization['variable']=='CO2 FFI', '2014':]
+#                             .values
+#                         )
+#                     )
+#                 ]
+#             ],
+#             columns = ['model', 'scenario', 'variable', 'region', 'unit'] + [str(year) for year in range(2014, 2025)]
+#         )
+#     ),
+#     ignore_index=True
+# )
 
 # %%
 # save out the version for historical harmonization
 df_historical_harmonization.to_csv('../data/output/historical_harmonization_5yr_running_means_2014-2024.csv', index=False)
-
-# %%
-# # finally, make into a fair format emissions file
-# # drop model and put on half-years
-
-
-# this is not modified from above yet
-
-
-# df_fair_calibrate = df_emissions.copy()
-# variables_to_mean = ['BC', 'OC', 'CO', 'NH3', 'NOx', 'VOC', 'CO2|AFOLU']
-# for variable in variables_to_mean:
-#     for year in range(2015, 2023):
-#         df_historical_harmonization.loc[df_historical_harmonization['variable']==f'Emissions|{variable}', str(year)] = (
-#             df_emissions.loc[df_emissions['variable']==f'Emissions|{variable}', str(year-2):str(year+2)].mean(axis=1).values
-#         )
-#     lrr = (
-#         linregress(
-#             np.arange(2018, 2023),
-#             df_historical_harmonization.loc[df_historical_harmonization['variable']==f'Emissions|{variable}', '2018':'2022']
-#         )
-#     )
-#     df_historical_harmonization.loc[df_historical_harmonization['variable']==f'Emissions|{variable}', '2023':'2024'] = (
-#         lrr.slope * np.array((2023, 2024)) + lrr.intercept
-#     )
-# to_drop = [str(year) for year in range(1750, 2014)]
-# df_historical_harmonization.drop(columns=to_drop, inplace=True)
-# df_historical_harmonization['model']='reconstructed'
-# df_historical_harmonization['variable'] = df_historical_harmonization['variable'].replace(scenariomip_to_fair)
-#     #list(df_historical_harmonization['variable'].values)
-# #df_historical_harmonization.replace(to_replace='Emissions|*', value='', regex=True)
-# df_historical_harmonization
-
-# %%
-# make into a fair-format emissions input file
-# rename variable
-# drop model
-# put on half years
+df_historical_harmonization
