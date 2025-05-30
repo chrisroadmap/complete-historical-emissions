@@ -1,3 +1,6 @@
+# large harmonization databases
+data/input/harmonisation-history*/
+
 # Don't commit notebooks with jupytext
 *.ipynb
 
